@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 
@@ -10,11 +9,11 @@ if str(PROJECT_ROOT) not in sys.path:
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-# pyrefly: ignore [missing-import]
-from app.core.llm import get_llm, get_embeddings
+#from langchain_core.output_parsers import StrOutputParser
+#from langchain_core.prompts import ChatPromptTemplate
+#from langchain_core.runnables import RunnablePassthrough
+#from app.core.llm import get_llm, get_embeddings
+from app.core.llm import get_embeddings
 
 
 
@@ -22,25 +21,25 @@ if hasattr(sys.stdout, "reconfigure"):
     getattr(sys.stdout, "reconfigure")(encoding="utf-8")
 
 
-ASKDOC_SYSTEM_PROMPT = """You are AskDoc agent, a document assistant. Answer only based on given context. If the answer is not in the context say "I don't know". Cite the answer from context. Never cite information from other sources except the context. Answer shortly and to the point unless the user states otherwise. Include all necessary details related to context."""
+#ASKDOC_SYSTEM_PROMPT = """You are AskDoc agent, a document assistant. Answer only based on given context. If the answer is not in the context say "I don't know". Cite the answer from context. Never cite information from other sources except the context. Answer shortly and to the point unless the user states otherwise. Include all necessary details related to context."""
 
-askdoc_template = ChatPromptTemplate.from_messages([
-    ("system", ASKDOC_SYSTEM_PROMPT),
-    ("human", "Context:\n{context}\n\nQuestion: {question}")
-])
-
-
-def format_docs(docs):
-    """Format list of retrieved documents into a single context string."""
-    return "\n\n---\n\n".join(
-        f"[Source: {Path(doc.metadata.get('source', '')).name}]\n{doc.page_content}"
-        for doc in docs
-    )
+#askdoc_template = ChatPromptTemplate.from_messages([
+#    ("system", ASKDOC_SYSTEM_PROMPT),
+#    ("human", "Context:\n{context}\n\nQuestion: {question}")
+#])
 
 
-def build_rag_chain(data_dir: Path | str | None = None):
+#def format_docs(docs):
+#    """Format list of retrieved documents into a single context string."""
+#    return "\n\n---\n\n".join(
+#        f"[Source: {Path(doc.metadata.get('source', '')).name}]\n{doc.page_content}"
+#        for doc in docs
+#    )
 
-    """Load documents from data_dir, build Chroma vectorstore, and return a RAG chain."""
+
+def build_vectorstore(data_dir: Path | str | None = None):
+
+    """Load documents from data_dir, build Chroma vectorstore"""
     if data_dir is None:
         # Default to /data in the project root
         data_dir = Path(__file__).resolve().parent.parent.parent / "data"
@@ -66,26 +65,27 @@ def build_rag_chain(data_dir: Path | str | None = None):
     # 3. Create VectorStore and Retriever
     embeddings = get_embeddings()
     vectorstore = Chroma.from_documents(documents=chunks, embedding=embeddings)
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+    print(" Chroma vectorstore created.")
+    return vectorstore
 
     # 4. Construct RAG chain
-    llm = get_llm()
-    rag_chain = (
-        {
-            "context": retriever | format_docs,
-            "question": RunnablePassthrough(),
-        }
-        | askdoc_template
-        | llm
-        | StrOutputParser()
-    )
+    #llm = get_llm()
+    #rag_chain = (
+    #    {
+    #        "context": retriever | format_docs,
+    #        "question": RunnablePassthrough(),
+    #    }
+    #    | askdoc_template
+    #    | llm
+    #    | StrOutputParser()
+    #)
 
-    return rag_chain
+    #return rag_chain, vectorstore
 
 
 if __name__ == "__main__":
-    rag_chain = build_rag_chain()
-
+    vectorstore = build_vectorstore()
+'''
     questions = [
         "What is the remote work policy?",
         "What are the security guidelines for passwords?",
@@ -97,4 +97,4 @@ if __name__ == "__main__":
         print(f"\n❓ Question: {q}")
         response = rag_chain.invoke(q)
         print(f"💡 Answer: {response}")
-
+'''

@@ -1,11 +1,12 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-# pyrefly: ignore [missing-import]
-from app.core.llm import get_llm
+#from app.core.llm import get_llm
+from app.core.agent import build_agent
 
 
 
 router = APIRouter()
+agent = build_agent()
 
 class ChatRequest(BaseModel):
     message: str
@@ -15,6 +16,14 @@ class ChatResponse(BaseModel):
 
 @router.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
-    llm = get_llm()
-    response = llm.invoke(request.message)
-    return ChatResponse(response=str(response.content))
+
+    result = agent.invoke({
+        "messages": [
+            {
+                "role": "user",
+                "content": request.message,
+            }
+        ]
+    })
+    response = result["messages"][-1].content
+    return ChatResponse(response=response)
