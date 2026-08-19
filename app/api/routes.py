@@ -1,6 +1,8 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
+# pyrefly: ignore [missing-import]
 from app.core.llm import get_llm
+
 
 
 router = APIRouter()
@@ -15,4 +17,4 @@ class ChatResponse(BaseModel):
 def chat(request: ChatRequest):
     llm = get_llm()
     response = llm.invoke(request.message)
-    return ChatResponse(response=response.content)
+    return ChatResponse(response=str(response.content))
