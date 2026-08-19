@@ -32,18 +32,20 @@ else:
     print("❌ No API keys found. Edit .env")
 
 def get_llm(temperature: float = 0.0):
-    """Return a chat model for the configured provider."""
+    """Return a chat model for the configured provider with explicit timeout."""
     if provider == "openai":
-        return ChatOpenAI(model="gpt-4o", temperature=temperature)
+        return ChatOpenAI(model="gpt-4o", temperature=temperature, timeout=30.0)
     elif provider == "azure":
         return AzureChatOpenAI(
             azure_deployment=os.getenv("AZURE_OPENAI_DEPLOYMENT"),
             azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
             api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-12-01-preview"),
             temperature=temperature,
+            timeout=30.0,
         )
     elif provider == "gemini":
-        return ChatGoogleGenerativeAI(model="gemini-3.6-flash", temperature=temperature)
+        model_name = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
+        return ChatGoogleGenerativeAI(model=model_name, temperature=temperature, max_retries=3, timeout=30.0)
     else:
         raise ValueError("No provider configured.")
 
