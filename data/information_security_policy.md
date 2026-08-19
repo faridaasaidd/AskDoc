@@ -1,3 +1,69 @@
+---
+title: "Synthetix Global Inc. Information Security & Data Privacy Policy"
+document_id: "POL-SEC-2026-004"
+version: "4.1"
+status: "Approved"
+effective_date: "2026-02-01"
+review_cycle: "Annual"
+next_review_date: "2027-02-01"
+classification: "Internal Restricted"
+owner: "Information Security Office (CISO)"
+document_type: "Policy"
+category: "Information Security"
+subcategory: "Data Privacy and Cybersecurity"
+audience:
+  - Employees
+  - Contractors
+  - Consultants
+  - Third-Party Service Providers
+company: "Synthetix Global Inc."
+department: "Information Security Office"
+compliance_standards:
+  - ISO/IEC 27001:2022
+  - SOC 2 Type II
+  - GDPR
+  - CCPA
+security_domains:
+  - Data Classification
+  - Identity and Access Management
+  - Endpoint Security
+  - Incident Response
+  - Secure Software Development
+  - Compliance Auditing
+data_classification_levels:
+  - Public
+  - Internal
+  - Confidential
+  - Restricted
+confidentiality: "Internal Restricted"
+approval_authority: "Chief Information Security Officer (CISO)"
+policy_region: "Global"
+language: "en-US"
+risk_level: "High"
+retention_period: "Active while superseded; archive for 7 years after retirement"
+source_system: "Policy Management System"
+last_updated: "2026-02-01"
+keywords:
+  - information security
+  - data privacy
+  - cybersecurity
+  - GDPR
+  - CCPA
+  - ISO 27001
+  - SOC 2
+  - IAM
+  - MFA
+  - incident response
+  - SSDLC
+  - endpoint security
+tags:
+  - Security
+  - Privacy
+  - Compliance
+  - Governance
+  - Risk Management
+---
+
 # Synthetix Global Inc. — Information Security & Data Privacy Policy
 
 **Document ID:** POL-SEC-2026-004  

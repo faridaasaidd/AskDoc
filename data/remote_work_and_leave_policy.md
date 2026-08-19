@@ -1,3 +1,60 @@
+---
+title: "Synthetix Global Inc. Remote Work, Leaves, & Expense Policy"
+document_id: "POL-OPS-2026-009"
+version: "2.4"
+status: "Approved"
+effective_date: "2026-03-01"
+review_cycle: "Annual"
+next_review_date: "2027-03-01"
+owner: "People Operations & Global Finance"
+document_type: "Policy"
+category: "Operations"
+subcategory: "Remote Work, Leave Management, and Expenses"
+audience:
+  - Full-Time Employees
+  - Part-Time Employees
+  - Remote Employees
+  - Hybrid Employees
+  - Contractors
+company: "Synthetix Global Inc."
+department:
+  - People Operations
+  - Global Finance
+compliance_frameworks:
+  - Labor Law Compliance
+  - Remote Work Standards
+  - Employee Benefits Administration
+  - Corporate Travel & Expense Management
+confidentiality: "Internal Use Only"
+approval_authority: "Chief People Officer (CPO) and Chief Financial Officer (CFO)"
+policy_region: "Global"
+language: "en-US"
+keywords:
+  - remote work
+  - hybrid work
+  - PTO
+  - paid time off
+  - parental leave
+  - bereavement leave
+  - sabbatical
+  - employee benefits
+  - reimbursement
+  - home office stipend
+  - travel policy
+  - expense management
+  - offboarding
+retention_period: "Active while superseded; archive for 7 years after retirement"
+last_updated: "2026-03-01"
+source_system: "Workday"
+tags:
+  - HR
+  - Operations
+  - Remote Work
+  - Employee Benefits
+  - Finance
+  - Travel
+  - Expense Management
+---
 # Synthetix Global Inc. — Remote Work, Leaves, & Expense Policy
 
 **Document ID:** POL-OPS-2026-009  

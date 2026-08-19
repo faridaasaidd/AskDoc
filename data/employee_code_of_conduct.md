@@ -1,3 +1,49 @@
+---
+title: "Synthetix Global Inc. Employee Code of Conduct & Workplace Ethics"
+document_id: "POL-HR-2026-001"
+version: "3.2"
+status: "Approved"
+effective_date: "2026-01-01"
+review_cycle: "Annual"
+next_review_date: "2027-01-01"
+owner: "Global People Operations & Legal Compliance"
+document_type: "Policy"
+category: "Human Resources"
+subcategory: "Code of Conduct"
+audience:
+  - Full-Time Employees
+  - Part-Time Employees
+  - Contractors
+  - Temporary Personnel
+company: "Synthetix Global Inc."
+department: "Global People Operations"
+compliance_frameworks:
+  - FCPA
+  - UK Bribery Act
+  - Equal Employment Opportunity
+  - Workplace Harassment Prevention
+confidentiality: "Internal Use Only"
+approval_authority: "Chief Human Resources Officer"
+policy_region: "Global"
+language: "en-US"
+keywords:
+  - code of conduct
+  - workplace ethics
+  - anti-harassment
+  - whistleblower protection
+  - conflict of interest
+  - employee policy
+  - compliance
+  - bribery prevention
+retention_period: "Active while superseded; archive for 7 years after retirement"
+last_updated: "2026-01-01"
+source_system: "Workday"
+tags:
+  - HR
+  - Compliance
+  - Ethics
+  - Governance
+---
 # Synthetix Global Inc. — Employee Code of Conduct & Workplace Ethics
 
 **Document ID:** POL-HR-2026-001  
