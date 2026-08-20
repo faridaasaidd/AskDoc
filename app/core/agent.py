@@ -314,6 +314,7 @@ IMPORTANT RULES:
     # Build Graph
     # ======================================
 
+    # pyrefly: ignore [bad-specialization]
     builder = StateGraph(
         AskDocState
     )
