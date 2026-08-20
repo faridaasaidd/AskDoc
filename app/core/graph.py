@@ -220,6 +220,7 @@ IMPORTANT RULES:
     # Build Graph
     # ======================================
 
+    # pyrefly: ignore [bad-specialization]
     builder = StateGraph(AskDocState)
 
     tool_node = ToolNode(tools)
