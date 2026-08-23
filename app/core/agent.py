@@ -1,9 +1,11 @@
 ### not used
 import sys
 from pathlib import Path
-from typing import Annotated, Any
-
-from typing_extensions import TypedDict
+from typing import (
+    Annotated,
+    Any,
+    TypedDict,
+)
 
 from langchain_core.messages import (
     AnyMessage,
@@ -115,10 +117,11 @@ def safety_guardrail_node(
         return {
             "is_safe": False,
 
-            "generation": (
-                "I cannot process this request. "
-                f"{validation_message}"
-            ),
+            "generation": validation_message,
+
+            "messages": [
+                AIMessage(content=validation_message)
+            ],
 
             "escalated": False,
         }
@@ -228,6 +231,10 @@ IMPORTANT RULES:
 8. When document search results contain
    source names, cite those sources clearly.
 
+9. Never assist with or provide instructions
+   for harmful, violent, illegal, or dangerous
+   activities. Refuse such requests directly.
+
 """
         )
 
@@ -308,6 +315,7 @@ IMPORTANT RULES:
     # Build Graph
     # ======================================
 
+    # pyrefly: ignore [bad-specialization]
     builder = StateGraph(
         AskDocState
     )
