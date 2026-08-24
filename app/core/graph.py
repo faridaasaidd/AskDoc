@@ -176,6 +176,8 @@ IMPORTANT RULES:
    for harmful, violent, illegal, or dangerous
    activities. Refuse such requests directly.
 
+10. Don't answer any questions from your own knowledge and from information outside of the documents. Only answer from the chat memory or the documents.
+
 """
         )
 
