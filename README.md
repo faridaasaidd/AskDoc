@@ -7,7 +7,7 @@
 ## 🌟 Key Features
 
 * **Multi-Format Document Ingestion (.pdf, .docx, .md, .txt)**:
-  Automatically loads and chunks Markdown, plain Text, PDF, and Microsoft Word documents from [`data/`](file:///c:/Users/VOIS/Desktop/AskDoc/data) using `PyPDFLoader`, `Docx2txtLoader`, and `TextLoader`.
+  Automatically loads and chunks Markdown, plain Text, PDF, and Microsoft Word documents from [`data/`](data/) using `PyPDFLoader`, `Docx2txtLoader`, and `TextLoader`.
 
 * **Single-Time Chunking & Disk Persistence**:
   Document loading, splitting, and embedding generation happen **only once** and are persisted to `./chroma_db`. Subsequent application restarts load instantly from disk with 0 repetitive chunking.
@@ -35,20 +35,27 @@
 
 ```
 AskDoc/
-├── app/
-│   ├── api/
-│   │   └── routes.py       # FastAPI HTTP router (/chat endpoint with thread_id)
-│   ├── core/
-│   │   ├── graph.py        # LangGraph State Machine, nodes, graders & guardrails
-│   │   ├── safety.py       # Input sanitization, prompt injection blocklist & PII redaction
-│   │   ├── llm.py          # Multi-provider LLM initializer (Gemini, OpenAI, Azure OpenAI)
-│   │   ├── rag.py          # Multi-format doc loaders (.pdf/.docx/.md/.txt) & Chroma persistence
-│   │   ├── imports.py      # Dependency verifier
-│   │   └── config.py       # App configuration
-│   └── main.py             # FastAPI entry point
+├── src/
+│   └── app/
+│       ├── api/
+│       │   └── routes.py       # FastAPI HTTP router (/chat endpoint with thread_id)
+│       ├── core/
+│       │   ├── graph.py        # LangGraph State Machine, nodes, graders & guardrails
+│       │   ├── safety.py       # Input sanitization, prompt injection blocklist & PII redaction
+│       │   ├── llm.py          # Multi-provider LLM initializer (Gemini, OpenAI, Azure OpenAI)
+│       │   ├── rag.py          # Multi-format doc loaders (.pdf/.docx/.md/.txt) & Chroma persistence
+│       │   └── imports.py      # Dependency verifier
+│       ├── tools/              # Document search and metadata tools
+│       └── main.py             # FastAPI entry point
 ├── data/                   # Policy documents (.pdf, .docx, .md, .txt)
 ├── chroma_db/              # Persisted vector database storage
+├── frontend/
+│   └── chainlit_app.py     # Chainlit chat interface
+├── tests/
+│   └── test_safety.py      # Safety and API tests
+├── chainlit.md             # Chainlit welcome content
 ├── pyproject.toml          # Project dependencies & build configuration
+├── pyrightconfig.json      # Pyright source-path configuration
 └── README.md               # Project documentation
 ```
 
@@ -86,6 +93,13 @@ uv run uvicorn app.main:app --reload
 ```
 The server will start at `http://127.0.0.1:8000`.
 
+### Start the Chainlit Frontend
+In a second terminal:
+```bash
+uv run chainlit run frontend/chainlit_app.py
+```
+The Chainlit interface will be available at the URL shown in the terminal. Make sure the FastAPI server is running first.
+
 ### Interactive API Documentation
 Open your browser and navigate to:
 * **Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
@@ -94,6 +108,7 @@ Open your browser and navigate to:
 ---
 
 ## 🧪 Testing API Endpoints
+
 
 ### Standard POST Request (`POST /chat`)
 ```powershell

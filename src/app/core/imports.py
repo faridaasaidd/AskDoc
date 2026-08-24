@@ -19,10 +19,6 @@ REQUIRED_PACKAGES = [
 
 
 def check_dependencies(verbose: bool = True) -> bool:
-    """
-        Checks whether all required dependencies are installed.
-        Returns True if all packages are installed, False otherwise.
-    """
     if verbose:
         print("Checking dependencies...")
 

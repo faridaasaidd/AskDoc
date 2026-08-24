@@ -123,7 +123,6 @@ class InputGuardrail:
 
 
 class PIIDetector:
-    """Output Guardrail: Scans outgoing text for PII and redacts it."""
     
     PATTERNS = {
         "EMAIL": r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b",
@@ -157,7 +156,6 @@ class SafetyLayer:
         return self.pii.redact(text)
 
 
-# Singleton instance and helper functions for convenience
 _safety_layer = SafetyLayer()
 
 def sanitize_and_validate_input(text: str) -> Tuple[bool, str]:

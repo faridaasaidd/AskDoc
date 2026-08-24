@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -20,8 +20,6 @@ from app.core.llm import get_embeddings
 
 
 def format_docs(docs):
-    """Format retrieved documents into a readable context string."""
-
     if not docs:
         return "No relevant context found."
 
@@ -33,7 +31,6 @@ def format_docs(docs):
 
 
 def load_multi_format_documents(data_dir: Path):
-    """Load .md, .txt, .pdf and .docx documents."""
 
     docs = []
 
@@ -118,21 +115,12 @@ def build_vectorstore(
         and any(persist_dir.iterdir())
     ):
 
-        print(
-            f"📦 Loading Chroma database "
-            f"from {persist_dir}"
-        )
-
         return Chroma(
             persist_directory=str(persist_dir),
             embedding_function=embeddings,
         )
 
     # Create database
-    print(
-        f"📄 Loading documents from "
-        f"{data_dir}"
-    )
 
     docs = load_multi_format_documents(
         data_dir
@@ -163,10 +151,6 @@ def build_vectorstore(
         documents=chunks,
         embedding=embeddings,
         persist_directory=str(persist_dir),
-    )
-
-    print(
-        "✅ Vector database created successfully"
     )
 
     return vectorstore

@@ -1,4 +1,3 @@
-### not used
 import sys
 from pathlib import Path
 from typing import (
@@ -20,11 +19,8 @@ from langgraph.graph import (
 )
 
 from langgraph.graph.message import add_messages
-
 from langgraph.prebuilt import ToolNode
-
 from langgraph.checkpoint.memory import MemorySaver
-
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -34,7 +30,6 @@ if str(PROJECT_ROOT) not in sys.path:
         str(PROJECT_ROOT),
     )
 
-
 from app.core.llm import get_llm
 from app.core.rag import build_vectorstore
 
@@ -42,87 +37,58 @@ from app.core.safety import (
     sanitize_and_validate_input,
     redact_pii,
 )
-
 from app.tools.document_search import (
     create_document_search_tool,
 )
-
 from app.tools.document_metadata import (
     create_document_metadata_tool,
 )
-
 from app.tools.list_documents import (
     create_list_documents_tool,
 )
 
 
-# ==========================================
-# State
-# ==========================================
 
 class AskDocState(TypedDict):
-
     messages: Annotated[
         list[AnyMessage],
         add_messages,
     ]
-
     generation: str
     is_safe: bool
     sources: list[str]
     escalated: bool
 
-# ==========================================
-# Safety Node
-# ==========================================
+#safety node
 
 def safety_guardrail_node(
     state: AskDocState,
 ) -> dict[str, Any]:
 
-    # Find the latest user message
-
     user_message = next(
         (
             message
-            for message in reversed(
-                state["messages"]
-            )
+            for message in reversed(state["messages"])
             if message.type == "human"
         ),
         None,
     )
 
     if user_message is None:
-
         return {
             "is_safe": False,
-            "generation": (
-                "I could not find a user question."
-            ),
+            "generation": "I could not find a user question.",
+            "messages": [AIMessage(content="I could not find a user question.")],
         }
 
-    question = str(
-        user_message.content
-    )
-
-    is_valid, validation_message = (
-        sanitize_and_validate_input(
-            question
-        )
-    )
+    question = str(user_message.content)
+    is_valid, validation_message = sanitize_and_validate_input(question)
 
     if not is_valid:
-
         return {
             "is_safe": False,
-
             "generation": validation_message,
-
-            "messages": [
-                AIMessage(content=validation_message)
-            ],
-
+            "messages": [AIMessage(content=validation_message)],
             "escalated": False,
         }
 
@@ -131,66 +97,31 @@ def safety_guardrail_node(
     }
 
 
-# ==========================================
-# Agent
-# ==========================================
+# agent using tools
 
 def build_askdoc_graph(
     vectorstore=None,
 ):
 
     if vectorstore is None:
-
-        vectorstore = (
-            build_vectorstore()
-        )
+        vectorstore = build_vectorstore()
 
     # Create tools
-
-    search_documents = (
-        create_document_search_tool(
-            vectorstore
-        )
-    )
-
-    get_document_metadata = (
-        create_document_metadata_tool(
-            vectorstore
-        )
-    )
-
-    list_documents = (
-        create_list_documents_tool(
-            vectorstore
-        )
-    )
+    search_documents = create_document_search_tool(vectorstore)
+    get_document_metadata = create_document_metadata_tool(vectorstore)
+    list_documents = create_list_documents_tool(vectorstore)
 
     tools = [
-
         search_documents,
-
         get_document_metadata,
-
         list_documents,
-
     ]
 
     # Create LLM
+    llm = get_llm(temperature=0.0)
+    llm_with_tools = llm.bind_tools(tools)
 
-    llm = get_llm(
-        temperature=0.0
-    )
-
-    llm_with_tools = (
-        llm.bind_tools(
-            tools
-        )
-    )
-
-
-    # ======================================
-    # Agent Node
-    # ======================================
+   #agent node
 
     def agent_node(
         state: AskDocState,
@@ -235,159 +166,83 @@ IMPORTANT RULES:
    for harmful, violent, illegal, or dangerous
    activities. Refuse such requests directly.
 
+10. Don't answer any questions from your own knowledge and from information outside of the documents. Only answer from the chat memory or the documents.
+
 """
         )
 
-        response = (
-            llm_with_tools.invoke(
-                [system_message]
-                + state["messages"]
-            )
+        response = llm_with_tools.invoke(
+            [system_message] + state["messages"]
         )
 
         generation = ""
-
-        if (
-            isinstance(
-                response.content,
-                str,
-            )
-        ):
-
-            generation = (
-                redact_pii(
-                    response.content
-                )
-            )
+        if isinstance(response.content, str):
+            generation = redact_pii(response.content)
 
         return {
-
-            "messages": [
-                response
-            ],
-
-            "generation":
-                generation,
-
+            "messages": [response],
+            "generation": generation,
         }
 
-
-    # ======================================
-    # Routing
-    # ======================================
+#routing for safety
 
     def route_after_safety(
         state: AskDocState,
     ):
-
-        if state.get(
-            "is_safe",
-            False,
-        ):
-
+        if state.get("is_safe", False):
             return "agent"
-
         return END
-
 
     def should_continue(
         state: AskDocState,
     ):
-
-        last_message = (
-            state["messages"][-1]
-        )
+        last_message = state["messages"][-1]
 
         if (
-            isinstance(
-                last_message,
-                AIMessage,
-            )
+            isinstance(last_message, AIMessage)
             and last_message.tool_calls
         ):
-
             return "tools"
 
         return END
 
 
-    # ======================================
-    # Build Graph
-    # ======================================
+    builder = StateGraph(AskDocState)
 
-    # pyrefly: ignore [bad-specialization]
-    builder = StateGraph(
-        AskDocState
-    )
+    tool_node = ToolNode(tools)
 
-    tool_node = ToolNode(
-        tools
-    )
+    builder.add_node("safety_guardrail", safety_guardrail_node)
+    builder.add_node("agent", agent_node)
+    builder.add_node("tools", tool_node)
 
-    builder.add_node(
-        "safety_guardrail",
-        safety_guardrail_node,
-    )
-
-    builder.add_node(
-        "agent",
-        agent_node,
-    )
-
-    builder.add_node(
-        "tools",
-        tool_node,
-    )
-
-
-    builder.add_edge(
-        START,
-        "safety_guardrail",
-    )
-
+    builder.add_edge(START, "safety_guardrail")
 
     builder.add_conditional_edges(
         "safety_guardrail",
-
         route_after_safety,
-
         {
             "agent": "agent",
-
             END: END,
         },
     )
-
 
     builder.add_conditional_edges(
         "agent",
-
         should_continue,
-
         {
             "tools": "tools",
-
             END: END,
         },
     )
 
-
-    builder.add_edge(
-        "tools",
-        "agent",
-    )
-
-
-    # ======================================
-    # Memory
-    # ======================================
+    builder.add_edge("tools", "agent")
+    
+#memory
 
     memory = MemorySaver()
-
 
     graph = builder.compile(
         checkpointer=memory
     )
-
 
     return graph

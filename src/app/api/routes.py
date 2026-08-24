@@ -32,9 +32,7 @@ router = APIRouter()
 graph = build_askdoc_graph()
 
 
-# ==========================================
-# Request / Response Models
-# ==========================================
+# Request/Response model
 
 class ChatRequest(BaseModel):
 
@@ -54,9 +52,7 @@ class ChatResponse(BaseModel):
     thread_id: str
 
 
-# ==========================================
-# Chat Endpoint
-# ==========================================
+#Chat Endpoint
 
 @router.post(
     "/chat",

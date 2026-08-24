@@ -1,12 +1,3 @@
-import sys
-from pathlib import Path
-
-# Add project root directory to sys.path
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-
 from fastapi import FastAPI
 from app.core.imports import check_dependencies
 from app.api.routes import router

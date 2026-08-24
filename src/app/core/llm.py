@@ -67,7 +67,6 @@ def get_embeddings():
 # Test your setup
 if __name__ == "__main__":
     try:
-        # pyrefly: ignore [missing-import]
         from app.core.imports import check_dependencies
 
         check_dependencies(verbose=False)
